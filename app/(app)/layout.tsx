@@ -15,6 +15,8 @@ export default async function AppLayout({
     data: { user },
   } = await supabase.auth.getUser();
 
+  if (!user) return null;
+
   const { data: subscriptionData } = await supabase
     .from("subscriptions")
     .select("plan, status")
