@@ -33,7 +33,11 @@ export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   const isAuthPage =
-    pathname.startsWith('/login') || pathname.startsWith('/signup')
+    pathname.startsWith('/login') ||
+    pathname.startsWith('/signup') ||
+    pathname.startsWith('/forgot-password') ||
+    pathname.startsWith('/verify-email') ||
+    pathname.startsWith('/reset-password')
 
   // Redirect unauthenticated users from any non-auth page to /login.
   // The proxy is the single place that handles this so that refreshed session
