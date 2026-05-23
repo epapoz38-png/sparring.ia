@@ -7,15 +7,27 @@ import { createClient } from "@/lib/supabase/client";
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    setErrorMsg(null);
     setStatus("sending");
-    const supabase = createClient();
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `https://sparring-ia.vercel.app/api/auth/callback?next=/reset-password`,
-    });
-    setStatus(error ? "error" : "sent");
+    try {
+      const supabase = createClient();
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `https://sparring-ia.vercel.app/api/auth/callback?next=/reset-password`,
+      });
+      if (error) {
+        setErrorMsg(error.message);
+        setStatus("error");
+      } else {
+        setStatus("sent");
+      }
+    } catch (err) {
+      setErrorMsg(err instanceof Error ? err.message : "Erreur inconnue.");
+      setStatus("error");
+    }
   }
 
   if (status === "sent") {
@@ -72,7 +84,7 @@ export default function ForgotPasswordPage() {
 
         {status === "error" && (
           <p className="text-sm text-[var(--color-danger)] bg-[var(--color-danger)]/10 border border-[var(--color-danger)]/20 rounded-lg px-4 py-2.5">
-            Une erreur est survenue. Réessayez.
+            {errorMsg ?? "Une erreur est survenue. Réessayez."}
           </p>
         )}
 
