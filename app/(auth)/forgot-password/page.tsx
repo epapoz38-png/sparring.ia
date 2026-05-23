@@ -13,7 +13,7 @@ export default function ForgotPasswordPage() {
     setStatus("sending");
     const supabase = createClient();
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/api/auth/callback?next=/reset-password`,
+      redirectTo: `https://sparring-ia.vercel.app/api/auth/callback?next=/reset-password`,
     });
     setStatus(error ? "error" : "sent");
   }
